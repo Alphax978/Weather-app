@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>24 hour weather app</title>
+  </head>
+  <body>
+
+
+    <div class="container">
+      <div class="locates">
+        <p id="locationinfo"></p>
+      </div>
+
+      <div class="giventime">
+        <p id="timesnow"></p>
+      </div>
+
+      <div class="temps">
+        <p> <span id="weathervalue"></span>°C</p>
+      </div>
+
+      <div class="descrip">
+        <p  id="weatherdesc"></p>
+      </div>
+
+      <div class="prep">
+        <p> <span id="pressurevalue"></span> atm</p>
+      </div>
+
+      <div class="humin">
+        <p> <span id="humidityvalue"></span> g.m³</p>
+      </div>
+
+      <div class="winds">
+        <p> <span id="Windspeed"></span> mph</p>
+      </div>
+    </div>
+
+
+
+      <style>
+
+      *{
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        font-family: 'montserrat', sans-serif;
+        background: url('https://images.unsplash.com/photo-1584268778545-a237a4fa47da?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzM4fHx3ZWF0aGVyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60')
+        no-repeat;
+        background-size: cover;
+      }
+
+
+      .container{
+        text-align: center
+      }
+
+      .images{
+        height: 400px
+
+
+      }
+
+      .value_app h1{
+        padding: 15px;
+        margin: 0 auto;
+        font-size: 1.9em;
+      }
+
+
+      .locates{
+        color: #fff;
+        font-size: 170px;
+        font-weight: 300;
+        margin-bottom: 20px;
+        margin-top: 30px;
+      }
+
+      .temps{
+        color: #fff;
+        font-size: 95px;
+        font-weight: 600px;
+        margin: 30px 0px;
+        text-shadow: 2px 10px rgba(0, 0, 0, 0.6);
+      }
+
+      .descrip{
+        color:#fff;
+        font-size: 32px;
+        font-weight: 700;
+        font-style: italic;
+        margin-bottom: 15px;
+        text-shadow: 0px 3px rgba(0, 0, 0, 0.4);
+
+      }
+
+      .prep{
+        color: #fff;
+        font-size: 29px;
+        font-weight: 600;
+        font-style: italic;
+        margin-bottom: 13px;
+        text-shadow: 0px 3px rgba(0, 0, 0, 0.4);
+      }
+
+      .humin{
+        color: #fff;
+        font-size: 29px;
+        font-weight: 600;
+        font-style: italic;
+        margin-bottom: 13px;
+        text-shadow: 0px 3px rgba(0, 0, 0, 0.4);
+      }
+
+      .winds{
+        color: #fff;
+        font-size: 29px;
+        font-weight: 600;
+        font-style: italic;
+        margin-bottom: 13px;
+        text-shadow: 0px 3px rgba(0, 0, 0, 0.4);
+      }
+
+      .giventime{
+        color: #fff;
+        font-size: 40px;
+        font-weight: 50;
+      }
+
+      </style>
+
+
+
+
+      <script>
+
+// for Checking browser cache first, used if there and less than 10 seconds old
+if(localStorage.when != null
+   && parseInt(localStorage.when) + 10000 > Date.now()) {
+
+	let freshdata = Math.round((Date.now() - localStorage.when)/1000) + " second(s)";
+	document.getElementById("location-info").innerHTML = localStorage.locationinfo;
+	document.getElementById("weathervalue").innerHTML = localStorage.weathervalue;
+  document.getElementById("weatherdesc").innerHTML = localStorage.weatherdesc;
+  document.getElementById("pressurevalue").innerHTML = localStorage.pressurevalue;
+  document.getElementById("humidityvalue").innerHTML = localStorage.humidityvalue;
+  document.getElementById("Windspeed").innerHTML = localStorage.Windspeed;
+	document.getElementById("giventime").innerHTML = freshdata;
+
+// No local cache, access network
+} else {
+
+
+        //Fetching kingston up0n Hull  weather data from API
+        fetch('http://localhost:8080/2059734_mysapp.php?city=Hull',{ mode: 'no-cors'})
+
+        //Response string is converted into json object
+        .then(response => response.json())
+        .then(response => {
+
+          //Displaying API information in browser
+          console.log(response);
+
+          //inserting updated value from API in our html page
+          document.getElementById("locationinfo").innerHTML = response.city;
+          document.getElementById("weatherdesc").innerHTML = response.weather_description;
+          document.getElementById("weathervalue").innerHTML = response.weather_temperature;
+          document.getElementById("pressurevalue").innerHTML = response.weather_pressure;
+          document.getElementById("humidityvalue").innerHTML = response.weather_humidity;
+          document.getElementById("Windspeed").innerHTML = response.weather_windspeed;
+          document.getElementById("timesnow").innerHTML = response.weather_when;
+
+          ///saves new data in the browser with new time stamp
+          localStorage.locationinfo = response.city;
+		      localStorage.weatherdesc = response.weather_description;
+          localStorage.weathervalue = response.weather_temperature + '°C';
+          localStorage.pressurevalue = response.weather_pressure + 'atm';
+          localStorage.humidityvalue = response.weather_humidity + 'g.m³';
+          localStorage.Windspeed = response.weather_windspeed + 'mph';
+		      localStorage.when = Date.now();
+
+        })
+        .catch(err => {
+
+        // Displaying minor/major errors in console
+        console.log(err);
+        });
+
+}
+     </script>
+
+  </body>
+</html>
